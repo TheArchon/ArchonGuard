@@ -53,9 +53,9 @@
   "help_lockdown": "Emergency mode: restrict normal users while admins retain control.",
   "help_commands": "Admin commands: /status /config /duration 24h /newmember on /antilink on /antiflood on /nsfw on /lockdown on /warn /unwarn /warnings /whitelist /unwhitelist /setbadword /delbadword /badwords",
   "_meta": {
-    "code": "en",
-    "flag": "🇬🇧",
-    "name": "English"
+    "code": "he",
+    "flag": "🇮🇱",
+    "name": "עברית"
   },
   "welcome_on": "Welcome messages are enabled.",
   "welcome_off": "Welcome messages are disabled.",
@@ -65,6 +65,6 @@
   "bug_sent": "✅ Bug report sent to the logger group. Thank you for reporting the issue!",
   "bug_failed": "⚠️ I could not send the report to the logger group. Please try again later.",
   "bug_unavailable": "⚠️ Bug reporting is unavailable because no logger group is configured.",
-  "welcome_message": "👋 Welcome, {name}!\n\nPlease follow the group rules and enjoy your stay.",
+  "welcome_message": "👋 ברוך הבא, {name}!\n\nנא לכבד את כללי הקבוצה וליהנות מהשהייה.",
   "log_chat_invalid": "⚠️ Invalid logger group ID. Use a numeric chat ID."
 }

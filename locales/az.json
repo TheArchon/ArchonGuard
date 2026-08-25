@@ -53,9 +53,9 @@
   "help_lockdown": "Emergency mode: restrict normal users while admins retain control.",
   "help_commands": "Admin commands: /status /config /duration 24h /newmember on /antilink on /antiflood on /nsfw on /lockdown on /warn /unwarn /warnings /whitelist /unwhitelist /setbadword /delbadword /badwords",
   "_meta": {
-    "code": "en",
-    "flag": "🇬🇧",
-    "name": "English"
+    "code": "az",
+    "flag": "🇦🇿",
+    "name": "Azərbaycanca"
   },
   "welcome_on": "Welcome messages are enabled.",
   "welcome_off": "Welcome messages are disabled.",
