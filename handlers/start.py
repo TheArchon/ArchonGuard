@@ -70,7 +70,7 @@ def register(app,db):
             await q.answer(); await q.message.edit_text(f"🌐 **{tr(lang,'language_text')}**",reply_markup=language_menu()); return
         if data.startswith("ag:lang:"):
             new=normalize(data.split(":")[-1]); await db.set_language(user.id,new)
-            await q.answer(tr(new,"saved",lang=LANGUAGES[new]["name"]))
+            await q.answer(tr(new, "saved", name=LANGUAGES[new]["name"]))
             await q.message.edit_text(start_text(new),reply_markup=main_menu(new)); return
         if data=="ag:source":
             kb=InlineKeyboardMarkup([
