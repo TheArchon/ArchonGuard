@@ -86,7 +86,7 @@ def register(app, db, settings):
         title = escape(message.chat.title or "Unknown group")
 
         lines = [
-            "🐞 <b>ARCHONGUARD BUG REPORT</b>",
+            "🐞 <b>GUARDIAN BUG REPORT</b>",
             "",
             f"👤 <b>Reporter:</b> {reporter}",
             f"🆔 <b>User ID:</b> <code>{message.from_user.id}</code>",
