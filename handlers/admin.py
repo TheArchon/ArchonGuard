@@ -51,7 +51,7 @@ def register(app,db,settings):
         else:
             duration_text = f"{duration}s"
         await m.reply_text(
-            f"🛡️ ArchonGuard\n"
+            f"🛡️ Super Guardian\n"
             f"New-member: {tr(lang,'on') if g['new_member'] else tr(lang,'off')}\n"
             f"Duration: {duration_text}\n"
             f"Anti-link: {tr(lang,'on') if g['antilink'] else tr(lang,'off')}\n"
