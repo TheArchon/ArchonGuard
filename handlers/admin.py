@@ -14,10 +14,31 @@ from pyrogram import filters
 from pyrogram.types import ChatPermissions
 from utils import is_admin,target_user,parse_duration
 from i18n import tr
+from updater import update_bot, restart_bot
 
 async def allowed(c,m): return bool(m.from_user and await is_admin(c,m.chat.id,m.from_user.id))
 
 def register(app,db,settings):
+    @app.on_message(filters.command("update") & filters.private)
+    async def update_command(c,m):
+        if not m.from_user or m.from_user.id != settings.owner_id:
+            return
+
+        msg = await m.reply_text("🔄 Checking GitHub for updates...")
+
+        try:
+            updated, result = await update_bot()
+            await msg.edit_text(result)
+
+            if updated:
+                await restart_bot()
+
+        except Exception as e:
+            await msg.edit_text(
+                f"❌ Update failed.\\n\\n"
+                f"{type(e).__name__}: {e}"
+            )
+
     @app.on_message(filters.command(["status","config"]) & filters.group)
     async def status(c,m):
         if not await allowed(c,m): return
