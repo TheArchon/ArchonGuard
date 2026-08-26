@@ -52,7 +52,7 @@ def _user_label(user):
 
 
 def register(app, db, settings):
-    @app.on_message(filters.command("bug") & filters.group)
+    @app.on_message(filters.command("bug") & filters.group, group=-1)
     async def bug_report(client, message):
         if not message.from_user:
             return
