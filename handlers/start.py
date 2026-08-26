@@ -74,14 +74,14 @@ def register(app,db):
             await q.message.edit_text(start_text(new),reply_markup=main_menu(new)); return
         if data=="ag:source":
             kb=InlineKeyboardMarkup([
-                [InlineKeyboardButton(f"{emoji.GITHUB} GitHub",url=settings.source_github or "https://github.com"),
-                 InlineKeyboardButton(f"{emoji.CHANNEL} Channel",url=settings.source_channel or "https://t.me")],
+                [InlineKeyboardButton(f"{emoji.GITHUB} GitHub",url=settings.source_github or "https://github.com/TeamArchon"),
+                 InlineKeyboardButton(f"{emoji.CHANNEL} Channel",url=settings.source_channel or "https://t.me/TeamArchon")],
                 [InlineKeyboardButton(f"{emoji.BACK} {tr(lang,'back')}",callback_data="ag:back")]])
             await q.answer(); await q.message.edit_text(f"📡 **{tr(lang,'source')}**\n\n{tr(lang,'source_text')}",reply_markup=kb); return
         if data=="ag:support":
             kb=InlineKeyboardMarkup([
-                [InlineKeyboardButton(f"{emoji.SUPPORT} {tr(lang,'support')}",url=settings.support_url or "https://t.me"),
-                 InlineKeyboardButton(f"{emoji.CHANNEL} {'Updates'}",url=settings.updates_url or "https://t.me")],
+                [InlineKeyboardButton(f"{emoji.SUPPORT} {tr(lang,'support')}",url=settings.support_url or "https://t.me/ArchonCare"),
+                 InlineKeyboardButton(f"{emoji.CHANNEL} {'Updates'}",url=settings.updates_url or "https://t.me/ArchonNetwork")],
                 [InlineKeyboardButton(f"{emoji.BACK} {tr(lang,'back')}",callback_data="ag:back")]])
             await q.answer(); await q.message.edit_text(f"💬 **{tr(lang,'support')}**\n\n{tr(lang,'support_text')}",reply_markup=kb); return
         if data=="ag:help":
