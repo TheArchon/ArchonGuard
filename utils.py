@@ -12,8 +12,12 @@
 
 import re
 from pyrogram.enums import ChatMemberStatus
-URL_RE=re.compile(r"(https?://|www\.|t\.me/|telegram\.me/)",re.I)
-
+URL_RE = re.compile(
+    r"(?:https?://|www\.)\S+|"
+    r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+"
+    r"[a-z]{2,}(?:/\S*)?",
+    re.I
+)
 def contains_link(text): return bool(URL_RE.search(text or ""))
 
 def parse_duration(value):

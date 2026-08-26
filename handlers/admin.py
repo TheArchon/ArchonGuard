@@ -40,16 +40,81 @@ def register(app,db,settings):
             f"Lockdown: {tr(lang,'on') if g['lockdown'] else tr(lang,'off')}")
     @app.on_message(filters.command(["newmember","antilink","antiflood","nsfw","lockdown","welcome"]) & filters.group)
     async def toggle(c,m):
-        if not await allowed(c,m) or len(m.command)<2:return
+        if not await allowed(c,m) or len(m.command)<2:
+            return
+
         lang=await db.get_language(m.from_user.id,"en")
-        await db.set_group(m.chat.id,m.command[0],int(m.command[1].lower() in ("on","1","true","yes")))
+        setting_map = {
+            "newmember": "new_member",
+            "antilink": "antilink",
+            "antiflood": "antiflood",
+            "nsfw": "nsfw",
+            "lockdown": "lockdown",
+            "welcome": "welcome",
+        }
+
+        command = m.command[0].lower()
+        setting = setting_map.get(command)
+        if not setting:
+            return
+
+        enabled = int(m.command[1].lower() in ("on","1","true","yes"))
+
+        if setting == "lockdown":
+            try:
+                if enabled:
+                    # Lock normal members at Telegram permission level.
+                    # Chat administrators/owner remain allowed by Telegram.
+                    await c.set_chat_permissions(
+                        m.chat.id,
+                        ChatPermissions(
+                            can_send_messages=False,
+                            can_send_media_messages=False,
+                            can_send_other_messages=False,
+                            can_add_web_page_previews=False,
+                            can_send_polls=False
+                        )
+                    )
+                else:
+                    # Restore normal member permissions.
+                    await c.set_chat_permissions(
+                        m.chat.id,
+                        ChatPermissions(
+                            can_send_messages=True,
+                            can_send_media_messages=True,
+                            can_send_other_messages=True,
+                            can_add_web_page_previews=True,
+                            can_send_polls=True
+                        )
+                    )
+
+                await db.set_group(m.chat.id,"lockdown",enabled)
+                await m.reply_text(tr(lang,"updated"))
+
+            except Exception as e:
+                await m.reply_text(
+                    f"Lockdown error: {type(e).__name__}: {e}"
+                )
+            return
+
+        await db.set_group(m.chat.id,setting,enabled)
         await m.reply_text(tr(lang,"updated"))
+
     @app.on_message(filters.command("duration") & filters.group)
     async def duration(c,m):
         if not await allowed(c,m) or len(m.command)<2:return
         v=parse_duration(m.command[1]); lang=await db.get_language(m.from_user.id,"en")
-        if not v or not 60<=v<=604800:return await m.reply_text(tr(lang,"duration_invalid"))
-        await db.set_group(m.chat.id,"duration",v); await m.reply_text(tr(lang,"duration_set",hours=max(1,v//3600)))
+        if not v or not 60<=v<=604800:
+            return await m.reply_text(tr(lang,"duration_invalid"))
+
+        await db.set_group(m.chat.id,"duration",v)
+
+        if v < 3600:
+            minutes = v // 60
+            await m.reply_text(f"Duration set: {minutes} minute(s)")
+        else:
+            hours = v // 3600
+            await m.reply_text(f"Duration set: {hours} hour(s)")
     @app.on_message(filters.command(["whitelist","unwhitelist"]) & filters.group)
     async def white(c,m):
         if await allowed(c,m):

@@ -113,21 +113,51 @@ def register(app,db,settings):
                 continue
             if await db.is_whitelisted(m.chat.id,u.id) or await is_admin(c,m.chat.id,u.id): continue
             try:
-                await c.restrict_chat_member(m.chat.id,u.id,permissions=ChatPermissions(**PROBATION))
+                await c.restrict_chat_member(
+                    m.chat.id,
+                    u.id,
+                    permissions=ChatPermissions(**PROBATION)
+                )
                 await db.set_restriction(m.chat.id,u.id,until)
-            except Exception: pass
+                print(f"[PROBATION] Restricted user {u.id} in chat {m.chat.id}")
+
+            except Exception as e:
+                print(
+                    f"[PROBATION ERROR] user={u.id} "
+                    f"chat={m.chat.id}: {type(e).__name__}: {e}"
+                )
 
     @app.on_message(filters.group & ~filters.service)
     async def moderate(c,m):
+
         if not m.from_user or m.from_user.is_bot:return
         g=await db.group(m.chat.id)
-        if not g["enabled"] or await db.is_whitelisted(m.chat.id,m.from_user.id) or await is_admin(c,m.chat.id,m.from_user.id):return
-        if g["lockdown"]: await punish(c,m,"lockdown"); return
+
+        admin_check = await is_admin(c,m.chat.id,m.from_user.id)
+        whitelist_check = await db.is_whitelisted(m.chat.id,m.from_user.id)
+
+
+        if not g["enabled"] or whitelist_check or admin_check:
+            return
+        # During an actual Telegram-level lockdown, normal members
+        # cannot send messages. Keep this handler from deleting messages
+        # as a second lockdown mechanism.
+        if g["lockdown"]:
+            return
         until=await db.restriction(m.chat.id,m.from_user.id)
-        if until and until>int(time.time()) and m.media:
-            await punish(c,m,"probation-media"); return
+        is_probation = bool(until and until > int(time.time()))
+
+        # Telegram itself enforces the probation media restrictions.
+        # Continue processing text so anti-link and bad-word protection
+        # still work for restricted members.
         text=(m.text or m.caption or "").lower()
-        if g["antilink"] and contains_link(text): await punish(c,m,"link"); return
+
+        # DEBUG: anti-link decision
+        link_detected = contains_link(text)
+
+        if g["antilink"] and link_detected:
+            await punish(c,m,"link")
+            return
         words=await db.badwords(m.chat.id)
         if any(w in text for w in words):
             n=await db.add_warning(m.chat.id,m.from_user.id)
